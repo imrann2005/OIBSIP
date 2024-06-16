@@ -1,27 +1,39 @@
 const mongoose = require('mongoose');
-const { users } = require('../models/userSchema');
+const { UserModel } = require('../models/userSchema');
+const bcrypt = require('bcrypt');
+
+const jwt = require('jsonwebtoken');
 
 const loginController = async (req, res) => {
-    const { email, password} = req.body;
+    const { email, password } = req.body;
     try {
-        const user = await users.findOne({ email: email });
-        if(!user){
-            res.status(404).json({msg : "User Not Found"});
+        const user = await UserModel.findOne({ email: email });
+        if (!user) {
+            return res.status(404).json({ msg: "User Not Found" });
         }
-        else{
-            if(user.password == password){
-                res.status(200).json({msg : "Login Successful"});
+        bcrypt.compare(password, user.password, (err, result) => {
+            if (result){
+                const token = jwt.sign(
+                    {
+                        email : user.email,
+                        userId : user._id,
+                    },
+                    process.env.JWT_KEY || "secret_key",
+                    {
+                        expiresIn : '1h',
+                    }
+                );
+                return res.status(200).json({msg : "Auth Successfull",token : token});
             }
-            else{
-                res.status(203).json({msg : "Incorrect Password!"});
-            }
-        }
+            return res.status(409).json({ msg: "Incorrect Password" });
+        })
+
     } catch (error) {
         console.log(error);
-        res.send(500).json({msg : "Internal Server Error"});
+        res.send(500).json({ msg: "Internal Server Error" });
     }
 
 
 }
 
-module.exports = {loginController};
+module.exports = { loginController };

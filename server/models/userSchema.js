@@ -24,12 +24,12 @@ const userSchema =  mongoose.Schema(
    
     orders:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Pizza"
+        ref: "OrderModel"
     }],
 }
 
 )
 
-const users = mongoose.model("UserModel",userSchema);
+const UserModel = mongoose.model("UserModel",userSchema);
 
-module.exports = {users};
+module.exports = {UserModel};

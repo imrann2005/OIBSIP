@@ -4,6 +4,7 @@ const pizzaSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
+        unique : true,
     },
     base : {
         type : String,
@@ -13,9 +14,18 @@ const pizzaSchema = mongoose.Schema({
         type : Array,
         
     },
-    toppings : {
+    sauce : {
         type :Array,
         
+    },
+    cheese : {
+        type :Array,
+        
+    },
+    meat : Number,
+    qty : {
+        type : Number,
+        default : 0,
     },
     price : {
         type : String,
@@ -25,6 +35,6 @@ const pizzaSchema = mongoose.Schema({
 
 });
 
-const pizza = mongoose.model("pizza",pizzaSchema);
+const Pizza = mongoose.model("pizza",pizzaSchema);
 
-module.exports = {pizza};
+module.exports = {Pizza};
